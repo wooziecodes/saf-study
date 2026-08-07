@@ -1,0 +1,516 @@
+<title>Americas SAF — Comparative Opportunity Map</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --ink:         #0b0b0b;
+    --ink-2:       #52514e;
+    --ink-muted:   #898781;
+    --line:        #e1e0d9;
+    --accent:      #2a78d6;
+    --accent-wash: rgba(42,120,214,0.08);
+    /* ordinal ramp, light — validated: 250/350/450/600 */
+    --lvl1: #86b6ef;
+    --lvl2: #5598e7;
+    --lvl3: #2a78d6;
+    --lvl4: #184f95;
+    --lvl1-ink: #0b0b0b;
+    --lvl2-ink: #ffffff;
+    --lvl3-ink: #ffffff;
+    --lvl4-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --page:        #0d0d0d;
+      --surface:     #1a1a19;
+      --ink:         #ffffff;
+      --ink-2:       #c3c2b7;
+      --ink-muted:   #898781;
+      --line:        #2c2c2a;
+      --accent:      #3987e5;
+      --accent-wash: rgba(57,135,229,0.14);
+      /* ordinal ramp, dark — validated: 600/500/350/200 */
+      --lvl1: #184f95;
+      --lvl2: #256abf;
+      --lvl3: #5598e7;
+      --lvl4: #9ec5f4;
+      --lvl1-ink: #ffffff;
+      --lvl2-ink: #ffffff;
+      --lvl3-ink: #ffffff;
+      --lvl4-ink: #0b0b0b;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --page:        #0d0d0d;
+    --surface:     #1a1a19;
+    --ink:         #ffffff;
+    --ink-2:       #c3c2b7;
+    --ink-muted:   #898781;
+    --line:        #2c2c2a;
+    --accent:      #3987e5;
+    --accent-wash: rgba(57,135,229,0.14);
+    --lvl1: #184f95; --lvl2: #256abf; --lvl3: #5598e7; --lvl4: #9ec5f4;
+    --lvl1-ink: #ffffff; --lvl2-ink: #ffffff; --lvl3-ink: #ffffff; --lvl4-ink: #0b0b0b;
+  }
+  :root[data-theme="light"] .viz-root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --ink:         #0b0b0b;
+    --ink-2:       #52514e;
+    --ink-muted:   #898781;
+    --line:        #e1e0d9;
+    --accent:      #2a78d6;
+    --accent-wash: rgba(42,120,214,0.08);
+    --lvl1: #86b6ef; --lvl2: #5598e7; --lvl3: #2a78d6; --lvl4: #184f95;
+    --lvl1-ink: #0b0b0b; --lvl2-ink: #ffffff; --lvl3-ink: #ffffff; --lvl4-ink: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .viz-root {
+    background: var(--page);
+    min-height: 100vh;
+    padding: 56px 24px 80px;
+  }
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .lede {
+    font-size: 16.5px;
+    line-height: 1.62;
+    color: var(--ink-2);
+    max-width: 66ch;
+    margin: 0 0 40px;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  section { margin-bottom: 48px; }
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 0 0 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---- Heatmap ---- */
+  .grid-wrap { overflow-x: auto; }
+  .heatgrid {
+    display: grid;
+    grid-template-columns: 168px repeat(3, 1fr);
+    gap: 2px;
+    min-width: 560px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .hcell {
+    background: var(--surface);
+    padding: 14px 16px;
+    font-size: 13.5px;
+  }
+  .hcell.colhead {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .hcell.rowhead {
+    color: var(--ink-2);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    line-height: 1.3;
+  }
+  .hcell.corner { background: var(--surface); }
+  .hcell.score {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    cursor: default;
+    position: relative;
+    min-height: 68px;
+  }
+  .hcell.score .lvl-label { font-weight: 600; font-size: 13.5px; }
+  .hcell.score .lvl-sub { font-size: 11.5px; opacity: 0.85; line-height: 1.3; }
+  .lvl-1 { background: var(--lvl1); color: var(--lvl1-ink); }
+  .lvl-2 { background: var(--lvl2); color: var(--lvl2-ink); }
+  .lvl-3 { background: var(--lvl3); color: var(--lvl3-ink); }
+  .lvl-4 { background: var(--lvl4); color: var(--lvl4-ink); }
+  .hcell.score.flagged { box-shadow: inset 0 0 0 2px var(--accent); }
+  .hcell.score.flagged::after {
+    content: "";
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  .legend .swatchrow { display: flex; align-items: center; gap: 6px; }
+  .legend .sw { width: 12px; height: 12px; border-radius: 2px; }
+
+  /* ---- Timeline strip ---- */
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: 168px repeat(3, 1fr);
+    gap: 2px;
+    min-width: 560px;
+    margin-top: 2px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+  }
+  .tcell {
+    background: var(--surface);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .tcell.rowhead {
+    color: var(--ink-muted);
+    font-weight: 500;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ---- Tooltip ---- */
+  #tip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--page);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding: 9px 12px;
+    border-radius: 6px;
+    max-width: 260px;
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 10px));
+    transition: opacity 0.1s ease;
+    z-index: 20;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+  #tip.show { opacity: 1; }
+  #tip .tip-title { font-weight: 600; margin-bottom: 3px; }
+
+  /* ---- Corridor panel ---- */
+  .corridors {
+    display: grid;
+    gap: 2px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .corridor {
+    background: var(--surface);
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .corridor .route {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .corridor .route .arrow { color: var(--accent); font-weight: 400; }
+  .corridor .desc { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
+  .corridor .desc .fig { color: var(--ink); font-weight: 600; }
+  .corridor .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-wash);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 8px;
+  }
+
+  /* ---- Callout ---- */
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .callout strong { color: var(--ink); font-weight: 600; }
+
+  /* ---- Table view ---- */
+  details.tablewrap { margin-top: 8px; }
+  summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 8px 0;
+  }
+  summary:focus-visible, a:focus-visible, details summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .datatable-scroll { overflow-x: auto; margin-top: 10px; }
+  table.datatable {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 640px;
+    font-size: 12.5px;
+  }
+  table.datatable caption { text-align: left; color: var(--ink-muted); font-size: 12px; margin-bottom: 8px; }
+  table.datatable th, table.datatable td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  table.datatable th { color: var(--ink); font-weight: 600; }
+  table.datatable td:first-child, table.datatable th:first-child { color: var(--ink); font-weight: 500; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 640px) {
+    .corridor { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+
+<div class="viz-root">
+  <div class="page">
+    <p class="eyebrow">Americas SAF Study · Working Draft v2 · Aug 2026</p>
+    <h1>Where the Americas SAF opportunity actually sits for Singapore</h1>
+    <p class="lede">
+      Brazil scores well across every dimension that matters. The U.S. carries the region's largest
+      existing capacity but a narrowed Singapore role. Canada's production case is weak almost
+      everywhere it's scored — except the one dimension that counts most for Singapore, because its
+      value is the <strong>cross-border corridor</strong>, not the domestic market.
+    </p>
+
+    <section>
+      <h2>Comparative opportunity map</h2>
+      <div class="grid-wrap">
+        <div class="heatgrid" role="table" aria-label="Comparative opportunity map across four dimensions">
+          <div class="hcell corner" role="presentation"></div>
+          <div class="hcell colhead">United States</div>
+          <div class="hcell colhead">Brazil</div>
+          <div class="hcell colhead">Canada</div>
+
+          <div class="hcell rowhead">Feedstock scale</div>
+          <div class="hcell score lvl-3" data-tip="feedstock-us"><span class="lvl-label">Medium</span><span class="lvl-sub">Large, now North America‑restricted</span></div>
+          <div class="hcell score lvl-4" data-tip="feedstock-br"><span class="lvl-label">High</span><span class="lvl-sub">Largest & most diversified in the region</span></div>
+          <div class="hcell score lvl-1" data-tip="feedstock-ca"><span class="lvl-label">Low</span><span class="lvl-sub">Insufficient domestically; import‑dependent</span></div>
+
+          <div class="hcell rowhead">Policy certainty</div>
+          <div class="hcell score lvl-3" data-tip="policy-us"><span class="lvl-label">Medium</span><span class="lvl-sub">45Z extended, credit cut 43%</span></div>
+          <div class="hcell score lvl-4" data-tip="policy-br"><span class="lvl-label">High</span><span class="lvl-sub">Legislated ProBioQAV to 2037</span></div>
+          <div class="hcell score lvl-2" data-tip="policy-ca"><span class="lvl-label">Low–Medium</span><span class="lvl-sub">CFR not SAF‑specific; BC‑LCFS the exception</span></div>
+
+          <div class="hcell rowhead">Project scale / maturity</div>
+          <div class="hcell score lvl-4" data-tip="project-us"><span class="lvl-label">High</span><span class="lvl-sub">Largest existing capacity base</span></div>
+          <div class="hcell score lvl-4" data-tip="project-br"><span class="lvl-label">High</span><span class="lvl-sub">Acelen ~90% pre‑contracted, FID'd</span></div>
+          <div class="hcell score lvl-1" data-tip="project-ca"><span class="lvl-label">Low</span><span class="lvl-sub">Mostly renewable diesel, not SAF</span></div>
+
+          <div class="hcell rowhead">Near‑term SG relevance</div>
+          <div class="hcell score lvl-3" data-tip="sg-us"><span class="lvl-label">Medium</span><span class="lvl-sub">Structuring, traceability, book‑and‑claim</span></div>
+          <div class="hcell score lvl-4" data-tip="sg-br"><span class="lvl-label">High</span><span class="lvl-sub">Trade finance, traceability, APSAC</span></div>
+          <div class="hcell score lvl-3 flagged" data-tip="sg-ca"><span class="lvl-label">Medium</span><span class="lvl-sub">Corridor structuring, not production</span></div>
+        </div>
+        <div class="timeline-grid" aria-hidden="false">
+          <div class="tcell rowhead">Realistic volume timeline</div>
+          <div class="tcell">Ongoing, but growth pace uncertain post‑OBBBA</div>
+          <div class="tcell">2029 onward (Acelen); mandate ramps through 2037</div>
+          <div class="tcell">BC mandate from 2028; national volume marginal before then</div>
+        </div>
+      </div>
+      <div class="legend">
+        <span>Reading each cell:</span>
+        <span class="swatchrow"><span class="sw" style="background:var(--lvl1)"></span>Low</span>
+        <span class="swatchrow"><span class="sw" style="background:var(--lvl2)"></span>Low–Medium</span>
+        <span class="swatchrow"><span class="sw" style="background:var(--lvl3)"></span>Medium</span>
+        <span class="swatchrow"><span class="sw" style="background:var(--lvl4)"></span>High</span>
+        <span class="swatchrow"><span class="sw" style="background:transparent;box-shadow:inset 0 0 0 2px var(--accent)"></span>Corridor-driven, not production-driven</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="callout">
+        <strong>Canada's outlier cell is the point, not an anomaly.</strong> Feedstock, policy certainty
+        and project maturity all read Low or Low&#8211;Medium — yet near-term Singapore relevance still reads
+        Medium, the same score as the U.S. That gap exists entirely because 45Z's North American-content
+        rule turned Canada into a feedstock corridor, not because Canada is building SAF capacity.
+      </div>
+    </section>
+
+    <section>
+      <h2>Third-country corridors 45Z re-nationalisation opened up</h2>
+      <div class="corridors">
+        <div class="corridor">
+          <div class="route"><span>Argentina</span><span class="arrow">&rarr;</span><span>Canada</span></div>
+          <div class="desc">
+            Soy oil feeding Braya Renewable Fuels: <span class="fig">757,000 tonnes in 2024</span>,
+            up from <span class="fig">48,000 tonnes in 2023</span>. The flagship corridor &mdash;
+            best-documented, concrete tonnage trajectory. Braya exports 100% of output to the U.S.
+            <span class="tag">Feedstock &middot; trade finance &amp; structuring</span>
+          </div>
+        </div>
+        <div class="corridor">
+          <div class="route"><span>Mexico / Canada</span><span class="arrow">&rarr;</span><span>U.S.</span></div>
+          <div class="desc">
+            Tallow and UCO flowing into 45Z-eligible U.S. supply chains &mdash; the domestic-content
+            rule gives this material a policy-driven premium over non-North American feedstock.
+            <span class="tag">Feedstock &middot; trade finance &amp; structuring</span>
+          </div>
+        </div>
+        <div class="corridor">
+          <div class="route"><span>Brazil</span><span class="arrow">&rarr;</span><span>U.S. / Europe</span></div>
+          <div class="desc">
+            Finished SAF, not feedstock: Acelen's Bahia biorefinery has <span class="fig">~90% of
+            volumes pre-contracted</span>, with the U.S. and Europe named as primary export markets.
+            A different kind of flow &mdash; Singapore's angle is certificate trade, not physical logistics.
+            <span class="tag">Finished fuel &middot; book-and-claim</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <details class="tablewrap">
+      <summary>View full comparison as a data table</summary>
+      <div class="datatable-scroll">
+        <table class="datatable">
+          <caption>Comparative Opportunity Map — draft.md Section 4, United States / Brazil / Canada</caption>
+          <thead>
+            <tr><th>Dimension</th><th>United States</th><th>Brazil</th><th>Canada</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Feedstock scale</td><td>Large but now North America-restricted under 45Z</td><td>Largest and most diversified in the region (soy, sugarcane/ethanol, UCO, macaúba)</td><td>Insufficient domestically; import-dependent (Argentina soy oil)</td></tr>
+            <tr><td>Policy certainty</td><td>45Z extended to 2029 but credit value cut 43%; GREET/FD-CIC still finalising</td><td>Legislated ProBioQAV pathway to 2037; ANP SAF-specific rules still pending (2H 2026)</td><td>CFR credit market not SAF-specific; BC-LCFS is the only hard SAF mandate (from 2028)</td></tr>
+            <tr><td>Project scale / maturity</td><td>Largest existing capacity base (DGD, World Energy, Montana Renewables) but still import-dependent</td><td>Acelen ~90% pre-contracted, $3bn+, FID'd, 2029 start</td><td>Braya/Tidewater/Imperial Oil capacity is mostly renewable diesel, not SAF</td></tr>
+            <tr><td>Near-term SG relevance</td><td>Reoriented — Canadian/Mexican feedstock structuring, traceability, book-and-claim rather than Asian UCO pass-through</td><td>Trade finance, traceability, book-and-claim, APSAC channel</td><td>Argentina–Canada feedstock corridor structuring; BC-LCFS compliance sourcing from 2028</td></tr>
+            <tr><td>Realistic volume timeline</td><td>Ongoing, but growth pace uncertain post-OBBBA</td><td>2029 onward (Acelen); mandate ramps through 2037</td><td>BC mandate from 2028; national volume remains marginal before then</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <footer>
+      Source: <em>Americas SAF Study — Working Draft v2</em> (2026-08-06), Section 4 (Comparative
+      Opportunity Map) and Section 3 (Market Deep Dives). Ordinal levels (Low / Low&#8211;Medium /
+      Medium / High) are this chart's compression of the draft's prose ratings for visual comparison
+      &mdash; the data table above carries the full source wording. Chile, Colombia and Mexico are
+      tracked as a condensed watchlist in Section 5 and are not scored here.
+    </footer>
+  </div>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+  (function () {
+    var tipData = {
+      "feedstock-us": ["United States — Feedstock scale", "Dominated by UCO, tallow, soybean and corn oil; the North American-content rule redirects demand toward domestic, Canadian and Mexican material."],
+      "feedstock-br": ["Brazil — Feedstock scale", "Soybean oil at industrial scale, sugarcane ethanol for ATJ, used cooking oil, and macaúba — a native non-food oilseed grown specifically for SAF."],
+      "feedstock-ca": ["Canada — Feedstock scale", "Domestic canola oil, tallow and UCO can't support renewable-fuel ambitions; Braya alone imported 757,000t of Argentine soy oil in 2024."],
+      "policy-us": ["United States — Policy certainty", "OBBBA extended 45Z to Dec 2029 but cut the max SAF credit from $1.75 to $1.00/gal; GREET/FD-CIC lifecycle rules still being finalised."],
+      "policy-br": ["Brazil — Policy certainty", "ProBioQAV sets a well-to-wake emissions target from 1% (2027) to 10% (2037); ANP's SAF-specific production rules are still pending in 2H 2026."],
+      "policy-ca": ["Canada — Policy certainty", "The federal Clean Fuel Regulations credit market isn't SAF-specific (SAF was 0.8% of credits in 2024); BC-LCFS is the only hard SAF blending mandate, from 2028."],
+      "project-us": ["United States — Project scale/maturity", "Diamond Green Diesel, World Energy and Montana Renewables give the U.S. the region's largest existing capacity base, though the market still runs a SAF deficit against demand."],
+      "project-br": ["Brazil — Project scale/maturity", "Acelen's Bahia biorefinery: $3bn+, 1 billion litres/yr by 2029, ~90% of volumes already pre-contracted."],
+      "project-ca": ["Canada — Project scale/maturity", "Braya, Tidewater and Imperial Oil capacity is overwhelmingly renewable diesel, not SAF specifically."],
+      "sg-us": ["United States — Near-term SG relevance", "Value proposition narrowed from Asian UCO pass-through to structuring Canadian/Mexican flows, traceability and book-and-claim intermediation."],
+      "sg-br": ["Brazil — Near-term SG relevance", "Trade finance and structuring, certification/traceability partnerships (Acelen–Finboot model), book-and-claim linkage, and APSAC as an engagement channel."],
+      "sg-ca": ["Canada — Near-term SG relevance", "Argentina–Canada soy-oil corridor structuring and BC-LCFS compliance sourcing — value is in the corridor, not Canadian SAF production itself."]
+    };
+
+    var tip = document.getElementById("tip");
+    var cells = document.querySelectorAll(".hcell.score");
+
+    cells.forEach(function (cell) {
+      cell.addEventListener("mouseenter", function () {
+        var d = tipData[cell.getAttribute("data-tip")];
+        if (!d) return;
+        tip.innerHTML = '<div class="tip-title">' + d[0] + '</div>' + d[1];
+        tip.classList.add("show");
+      });
+      cell.addEventListener("mousemove", function (e) {
+        tip.style.left = e.clientX + "px";
+        tip.style.top = e.clientY + "px";
+      });
+      cell.addEventListener("mouseleave", function () {
+        tip.classList.remove("show");
+      });
+      cell.addEventListener("focus", function () {
+        var d = tipData[cell.getAttribute("data-tip")];
+        if (!d) return;
+        var r = cell.getBoundingClientRect();
+        tip.innerHTML = '<div class="tip-title">' + d[0] + '</div>' + d[1];
+        tip.style.left = (r.left + r.width / 2) + "px";
+        tip.style.top = r.top + "px";
+        tip.classList.add("show");
+      });
+      cell.addEventListener("blur", function () {
+        tip.classList.remove("show");
+      });
+      cell.setAttribute("tabindex", "0");
+    });
+  })();
+</script>
