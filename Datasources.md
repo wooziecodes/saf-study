@@ -1,6 +1,6 @@
 # Americas SAF Study — Data Source Map
 
-Compiled 2026-07-29. Companion to `workingdraft.md` / `workingplan.md`. Organized by category; each entry gives what it provides, access cost, and update cadence where known. A short "Corrections/flags for workingdraft.md" section is at the bottom — worth acting on before the next draft pass.
+Compiled 2026-07-29, refreshed 2026-08-16 with 8 sources closing gaps flagged in `gap-coverage-prompt.md` (Neste's Singapore/Rotterdam refineries, Singapore Airlines demand-side data, the 45Z FEOC rulemaking, and Malaysia/South Korea/Japan as competitive-hub-benchmark comparators). Companion to `workingdraft.md` / `workingplan.md`. Organized by category; each entry gives what it provides, access cost, and update cadence where known. A short "Corrections/flags for workingdraft.md" section is at the bottom — worth acting on before the next draft pass.
 
 ---
 
@@ -14,6 +14,7 @@ Compiled 2026-07-29. Companion to `workingdraft.md` / `workingplan.md`. Organize
 - **SAF Grand Challenge Tracking Metrics Dashboard** (DOE/FAA/USDA interagency) — energy.gov — annual dashboard on production, lifecycle CO2e, planned capacity. Free, ~annual (check for 2026 edition).
 - **CARB LCFS Data Dashboard** — ww2.arb.ca.gov/applications/lcfs-data-dashboard — credit/deficit generation by pathway, credit prices, transacted volumes. Free, monthly/quarterly. Best available proxy for real transacted SAF/renewable-diesel volumes and pricing in the largest single state program.
 - **Washington Dept. of Ecology Clean Fuel Standard data** — ecology.wa.gov — credit/deficit volumes, prices. Free, quarterly.
+- **Federal Register — Section 45Z Clean Fuel Production Credit** — federalregister.gov/documents/2026/02/04/2026-02246/section-45z-clean-fuel-production-credit — primary rulemaking text for the 45Z Foreign Entity of Concern (FEOC) restriction: "specified foreign entity" / "foreign-influenced entity" definitions (China/Russia/Iran/North Korea ties), effective for tax years after July 4, 2025 / 2027 respectively. Free.
 
 ### Brazil
 - **ANP RenovaBio "Painel Dinâmico da Plataforma CBIO"** — gov.br/anp — CBIO issuance/registration/retirement + B3 exchange price data. Free, updated fortnightly. Central Brazil source for this study.
@@ -49,6 +50,12 @@ Compiled 2026-07-29. Companion to `workingdraft.md` / `workingplan.md`. Organize
 - **IATA/CADO SAF Registry** — likely restricted to CORSIA-participant airlines/states — flag as possibly access-gated.
 - **IEA Bioenergy Task 39** — ieabioenergy.com — periodic global SAF commercialization progress reports. Free PDFs, not a live database.
 - **UN Comtrade** — comtrade.un.org — free tier + paid API, ~200 reporters, HS 6-digit granularity, monthly/annual.
+
+### Asia-Pacific hub comparators (Malaysia / South Korea / Japan)
+*Added for the competitive hub-benchmark gap — Singapore's "leading SAF hub" claim has never been benchmarked against these three regional contenders.*
+- **Malaysia SAF Market Intelligence (US ITA)** — trade.gov/market-intelligence/malaysia-energy-sustainable-aviation-fuel — US Dept. of Commerce brief on Petronas/Malaysia's SAF build-out, targeting ~1Mt/yr by 2028 under the Malaysian Aviation Sector Decarbonisation Roadmap. Free.
+- **MOLIT/MOTIE SAF Mandate press releases** — molit.go.kr/USR/NEWS/m_71/lst.jsp — Korea's official SAF blending mandate (1% from 2027, ramping to 7–10% by 2035). Korean-language primary source. Free.
+- **METI/MLIT SAF Public-Private Council** — meti.go.jp/shingikai/energy_environment/saf/index.html — official proceedings of Japan's joint SAF council (targets, supply-side mandate, subsidy design). Japanese-language primary source. Free.
 
 ---
 
@@ -104,6 +111,9 @@ Compiled 2026-07-29. Companion to `workingdraft.md` / `workingplan.md`. Organize
 | Braya Renewable Fuels | fluor.com/projects/braya-renewable-fuels | Up to 18,000 bbl/day operational; SAF expansion planned. Free. |
 | Petrobras / Ecopetrol | SEC EDGAR (Ecopetrol 6-K); Petrobras IR | **Gap: neither company has SAF-specific IR disclosures yet** — rely on ANP/Aerocivil filings and trade press instead, and say so explicitly in the study. |
 | HIF Global | no company IR page surfaced despite two searches | Brazil ($4B e-fuels plant, Feb 2026) and Chile updates trace only to trade press — flag as a sourcing gap if the study leans on HIF-specific figures. |
+| Neste — Singapore refinery (Tuas) | neste.com/en-sg/about-neste/how-we-operate/production/singapore-refinery | World's largest renewable diesel/SAF facility (~1Mt/yr SAF capability). The single largest current omission from the "Singapore as SAF hub" case. Free. |
+| Neste — Rotterdam refinery | neste.com/news/neste-invests-in-its-world-scale-renewable-products-refinery-in-rotterdam | Neste's own investment announcement for its Rotterdam (ARA) site — direct hub-benchmark comparator to Singapore, since Neste operates both. Free. |
+| Singapore Airlines | singaporeair.com newsroom (press-release section) | SIA/Scoot SAF offtake agreements (Neste, World Energy) and the 5%-of-fuel-by-2030 target — the demand-side proof point missing from the deck's feedstock/production-heavy coverage. Free. |
 
 **Government loan/grant trackers:**
 - **DOE Loan Programs Office — Montana Renewables page** (energy.gov/lpo) — primary-source correction on the loan structure (above). Free.
@@ -140,6 +150,7 @@ Compiled 2026-07-29. Companion to `workingdraft.md` / `workingplan.md`. Organize
 - **Sustainable Aviation Futures** (sustainableaviationfutures.com) — monthly SAF Spotlight, SAF Market Movers Guide. Free.
 - **epbr / Valor Econômico** — active Brazilian SAF coverage, Portuguese-language, not deeply indexed in English search — needs direct site search for granular sourcing.
 - **e-fuels.com/investor.html**, **RMI's saf.rmi.org** — supplementary project trackers, not in the original brief but worth a look.
+- **Ship & Bunker** (shipandbunker.com) — best available tracker for Fujairah's emerging biofuel bunkering activity (e.g. OMTI's first B30 delivery, the Middle East's first). Thin/watchlist-tier — no official Fujairah Port Authority SAF/biofuels portal exists yet. Free.
 
 ---
 

@@ -8,15 +8,6 @@ st.set_page_config(page_title="Americas SAF Study — Stats Explorer", page_icon
 
 df = pd.DataFrame(STATS)
 df["flagged"] = ~df["confirmed"]
-# source_url/as_of are only populated on entries independently pulled from a
-# primary source during the 2026-08-04 extraction pass (see stats_data.py);
-# draft-derived entries simply lack the column value (NaN after DataFrame
-# construction from heterogeneous dicts).
-if "source_url" not in df.columns:
-    df["source_url"] = None
-if "as_of" not in df.columns:
-    df["as_of"] = None
-df["primary_sourced"] = df["source_url"].notna()
 
 # Litres/yr -> US gallons/yr equivalent, for the one chart that compares
 # across countries reporting capacity in different units. Only projects with
@@ -42,7 +33,8 @@ cap_df = pd.DataFrame(CAPACITY_CHART_ROWS).sort_values("mgy")
 st.title("Americas SAF Study — Stats Explorer")
 st.caption(
     "Structured statistics extracted from `workingdraft.md`, cross-referenced against the corrections "
-    "surfaced in `Datasources.md`. Companion to the Data Source Explorer (`app.py`)."
+    "surfaced in `Datasources.md`. Every entry here is independently sourced. Companion to the "
+    "**Source Catalog** (home page)."
 )
 
 # ---------------- Sidebar filters ----------------
@@ -55,12 +47,6 @@ selected_categories = st.sidebar.multiselect("Category", categories, default=cat
 
 status_choice = st.sidebar.radio("Status", ["All", "Confirmed only", "Flagged only"], index=0)
 
-sourcing_choice = st.sidebar.radio(
-    "Sourcing", ["All", "Primary-sourced only", "Draft-derived only"], index=0,
-    help="Primary-sourced = independently pulled from a live source in the 2026-08-04 extraction pass "
-         "(carries a source_url). Draft-derived = lifted from workingdraft.md's prose.",
-)
-
 search = st.sidebar.text_input("Search metric/value", "")
 
 if st.sidebar.button("Reset filters"):
@@ -71,10 +57,6 @@ if status_choice == "Confirmed only":
     filtered = filtered[~filtered["flagged"]]
 elif status_choice == "Flagged only":
     filtered = filtered[filtered["flagged"]]
-if sourcing_choice == "Primary-sourced only":
-    filtered = filtered[filtered["primary_sourced"]]
-elif sourcing_choice == "Draft-derived only":
-    filtered = filtered[~filtered["primary_sourced"]]
 if search:
     mask = filtered["metric"].str.contains(search, case=False) | filtered["value_display"].str.contains(
         search, case=False
@@ -82,12 +64,11 @@ if search:
     filtered = filtered[mask]
 
 # ---------------- Summary metrics ----------------
-m1, m2, m3, m4, m5 = st.columns(5)
+m1, m2, m3, m4 = st.columns(4)
 m1.metric("Stats shown", len(filtered))
 m2.metric("Flagged / corrected", int(filtered["flagged"].sum()))
-m3.metric("Primary-sourced", int(filtered["primary_sourced"].sum()))
-m4.metric("Categories", filtered["category"].nunique())
-m5.metric("Countries / regions", filtered["country"].nunique())
+m3.metric("Categories", filtered["category"].nunique())
+m4.metric("Countries / regions", filtered["country"].nunique())
 
 st.divider()
 
@@ -171,12 +152,9 @@ tab1, tab2 = st.tabs(["Browse stats", "Flags & corrections"])
 with tab1:
     display_df = filtered.copy()
     display_df["Status"] = display_df["flagged"].map({True: "⚠️ Flagged", False: "Confirmed"})
-    display_df["Sourcing"] = display_df["primary_sourced"].map(
-        {True: "🔗 Primary", False: "Draft-derived"}
-    )
     st.dataframe(
         display_df[
-            ["country", "category", "metric", "value_display", "year", "Status", "Sourcing",
+            ["country", "category", "metric", "value_display", "year", "Status",
              "source_url", "as_of", "note"]
         ].rename(
             columns={

@@ -1,6 +1,6 @@
 # Free Data Sources — Extracted from Datasources.md
 
-Compiled 2026-07-29. All sources below are free (or have a usable free tier, noted). Paid/subscription-only sources (S&P Global Platts, Argus Media, BloombergNEF, Rystad, Trade Data Monitor/S&P GTA, IJGlobal, ADI Analytics SAF Tracker) are excluded — see Datasources.md for those.
+Compiled 2026-07-29, refreshed 2026-08-16 with 8 sources closing gaps flagged in `gap-coverage-prompt.md` (Neste's Singapore/Rotterdam refineries, Singapore Airlines demand-side data, the 45Z FEOC rulemaking, and Malaysia/South Korea/Japan as competitive-hub-benchmark comparators). All sources below are free (or have a usable free tier, noted). Paid/subscription-only sources (S&P Global Platts, Argus Media, BloombergNEF, Rystad, Trade Data Monitor/S&P GTA, IJGlobal, ADI Analytics SAF Tracker) are excluded — see Datasources.md for those.
 
 ---
 
@@ -14,6 +14,7 @@ Compiled 2026-07-29. All sources below are free (or have a usable free tier, not
 - **SAF Grand Challenge Tracking Metrics Dashboard** (DOE/FAA/USDA) — energy.gov — production, lifecycle CO2e, planned capacity. ~Annual.
 - **CARB LCFS Data Dashboard** — ww2.arb.ca.gov/applications/lcfs-data-dashboard — credit/deficit generation, prices, transacted volumes. Monthly/quarterly.
 - **Washington Dept. of Ecology Clean Fuel Standard data** — ecology.wa.gov — credit/deficit volumes, prices. Quarterly.
+- **Federal Register — Section 45Z Clean Fuel Production Credit** — federalregister.gov/documents/2026/02/04/2026-02246/section-45z-clean-fuel-production-credit — primary rulemaking text for the 45Z FEOC restriction (China/Russia/Iran/North Korea ownership ties), effective for tax years after July 4, 2025 / 2027.
 
 ### Brazil
 - **ANP RenovaBio "Painel Dinâmico da Plataforma CBIO"** — gov.br/anp — CBIO issuance/registration/retirement + B3 exchange price data. Fortnightly.
@@ -48,6 +49,12 @@ Compiled 2026-07-29. All sources below are free (or have a usable free tier, not
 - **IATA SAF facilities map + SAF Fact Sheet** — iata.org — location/technology/capacity/status. ~Semi-annual.
 - **IEA Bioenergy Task 39** — ieabioenergy.com — global SAF commercialization progress reports (PDFs, not live database).
 - **UN Comtrade** — comtrade.un.org — free tier (paid API also available). ~200 reporters, HS 6-digit, monthly/annual.
+
+### Asia-Pacific hub comparators (Malaysia / South Korea / Japan)
+*For the competitive hub-benchmark gap — Singapore's "leading SAF hub" claim has never been benchmarked against these three.*
+- **Malaysia SAF Market Intelligence (US ITA)** — trade.gov/market-intelligence/malaysia-energy-sustainable-aviation-fuel — Petronas/Malaysia's SAF build-out, targeting ~1Mt/yr by 2028.
+- **MOLIT/MOTIE SAF Mandate press releases** — molit.go.kr/USR/NEWS/m_71/lst.jsp — Korea's SAF blending mandate (1% from 2027 → 7–10% by 2035). Korean-language.
+- **METI/MLIT SAF Public-Private Council** — meti.go.jp/shingikai/energy_environment/saf/index.html — Japan's joint SAF council proceedings (targets, mandate, subsidies). Japanese-language.
 
 ---
 
@@ -94,6 +101,9 @@ Compiled 2026-07-29. All sources below are free (or have a usable free tier, not
 | Braya Renewable Fuels | fluor.com/projects/braya-renewable-fuels |
 | Petrobras / Ecopetrol | SEC EDGAR (Ecopetrol 6-K); Petrobras IR — no SAF-specific disclosures yet |
 | HIF Global | no company IR page found — trade press only |
+| Neste — Singapore refinery (Tuas) | neste.com/en-sg/about-neste/how-we-operate/production/singapore-refinery — world's largest renewable diesel/SAF facility (~1Mt/yr SAF) |
+| Neste — Rotterdam refinery | neste.com/news/neste-invests-in-its-world-scale-renewable-products-refinery-in-rotterdam — direct hub-benchmark comparator to Singapore |
+| Singapore Airlines | singaporeair.com newsroom (press-release section) — SIA/Scoot SAF offtake deals, 5%-by-2030 target |
 
 **Government loan/grant trackers:**
 - **DOE Loan Programs Office — Montana Renewables page** — energy.gov/lpo
@@ -128,6 +138,7 @@ Compiled 2026-07-29. All sources below are free (or have a usable free tier, not
 - **SAF Investor** — safinvestor.com — dedicated tracker, some content gated.
 - **epbr / Valor Econômico** — active Brazilian SAF coverage, Portuguese-language.
 - **e-fuels.com/investor.html**, **RMI's saf.rmi.org** — supplementary trackers, not deeply vetted yet.
+- **Ship & Bunker** (shipandbunker.com) — best available tracker for Fujairah's emerging biofuel bunkering activity (e.g. OMTI's first B30 delivery). Thin/watchlist-tier — no official Fujairah Port Authority SAF portal exists yet.
 
 ---
 

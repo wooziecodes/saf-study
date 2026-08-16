@@ -1,110 +1,159 @@
-"""Americas SAF Study — Quick Reference.
+"""Americas SAF Study — Source Catalog.
 
-The primary entry point for this Streamlit app. Built for an associate who is
-writing prose (not filtering data) — find the figure you need for the section
-you're on, click straight through to the source, cite it, move on. The full
-filterable stats explorer and the complete free-source catalog are one click
-away in the sidebar for deeper digging.
+The primary entry point for this Streamlit app. A curated, per-market
+shortlist of pre-vetted, free/open-access portals for follow-up research
+beyond the deck — click through to a market's primary source, pull the
+underlying data, keep digging. The Quick Reference stat cards and the full
+filterable stats explorer are one click away in the sidebar.
 """
 
 import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 
-from stats_data import CORRECTIONS, STATS
+from data_sources import CORRECTIONS, SOURCES
 
-st.set_page_config(page_title="Americas SAF Study — Reference", page_icon="🛩️", layout="wide")
+st.set_page_config(page_title="Americas SAF Study — Source Catalog", page_icon="🛩️", layout="wide")
 
-df = pd.DataFrame(STATS)
-for col in ("source_url", "as_of", "note"):
-    if col not in df.columns:
-        df[col] = None
+df = pd.DataFrame(SOURCES)
+COST_ORDER = ["Free", "Freemium", "Paid", "Restricted", "Unknown"]
 
-st.title("🛩️ Americas SAF Study — Quick Reference")
+st.title("🗂️ Americas SAF Study — Source Catalog")
 st.caption(
-    "Find the figure for the section you're writing, click the source link, cite it. "
-    "👈 The sidebar has the full filterable **Stats Explorer** (all charts/filters) and the "
-    "**Source Catalog** (all ~90 free sources for this study) if you need to dig deeper."
-)
-st.markdown(
-    "**Key:** &nbsp;🔗 **Source** — click through, this figure was independently pulled from a live "
-    "source and is safe to cite directly. &nbsp;·&nbsp; *(not yet independently verified)* — this figure "
-    "is drawn from `workingdraft.md`'s prose only; confirm it against a source before citing it in the "
-    "final study."
-)
-st.divider()
-
-search = st.text_input(
-    "🔍 Search for a figure — e.g. \"45Z\", \"CBIO\", \"credit price\", \"Acelen\"", ""
+    "Curated, per-market shortlist of pre-vetted, free/open-access portals for follow-up research "
+    "beyond the deck — one to a few best primary sources per market, not an exhaustive list. "
+    "👈 The sidebar has the **Quick Reference** stat cards and the full filterable **Stats "
+    "Explorer** for deeper digging. For the fuller raw-research archive (incl. paid/unconfirmed "
+    "sources), see `Datasources.md`."
 )
 
-COUNTRY_ORDER = [
-    "International", "United States", "Canada", "Brazil", "Chile", "Argentina", "Colombia", "Mexico",
-    "Singapore",
+# ---------------- Sidebar filters ----------------
+st.sidebar.header("Filters")
+categories = sorted(df["category"].unique())
+selected_categories = st.sidebar.multiselect("Category", categories, default=categories)
+
+costs = [c for c in COST_ORDER if c in df["cost"].unique()]
+selected_costs = st.sidebar.multiselect("Access cost", costs, default=costs)
+
+regions = sorted(df["region"].unique())
+selected_regions = st.sidebar.multiselect("Region", regions, default=regions)
+
+search = st.sidebar.text_input("Search name/description", "")
+
+if st.sidebar.button("Reset filters"):
+    st.rerun()
+
+filtered = df[
+    df["category"].isin(selected_categories)
+    & df["cost"].isin(selected_costs)
+    & df["region"].isin(selected_regions)
 ]
-CATEGORY_ORDER = [
-    "Policy & Regulation", "Feedstock & Trade Flows", "Production Capacity",
-    "Financing & Investment", "Pricing & Economics", "Market Outlook & Targets",
-]
-
-
-def ordered(values, priority):
-    present = [v for v in priority if v in values]
-    present += [v for v in sorted(set(values)) if v not in present]
-    return present
-
-
-def render_row(row):
-    metric = row["metric"]
-    value = row["value_display"]
-    if pd.notna(row["source_url"]) and row["source_url"]:
-        as_of = f" · as of {row['as_of']}" if pd.notna(row["as_of"]) and row["as_of"] else ""
-        tail = f" &nbsp;[🔗 Source ↗]({row['source_url']}){as_of}"
-    else:
-        tail = " &nbsp;*(not yet independently verified)*"
-    st.markdown(f"- **{metric}** — {value}{tail}")
-    if pd.notna(row["note"]) and row["note"]:
-        st.caption(row["note"])
-
-
-present_countries = ordered(df["country"].unique(), COUNTRY_ORDER)
-
 if search:
-    mask = (
-        df["metric"].str.contains(search, case=False)
-        | df["value_display"].str.contains(search, case=False)
-        | df["country"].str.contains(search, case=False)
-        | df["category"].str.contains(search, case=False)
+    mask = filtered["name"].str.contains(search, case=False) | filtered["description"].str.contains(
+        search, case=False
     )
-    results = df[mask]
-    st.subheader(f"Search results for “{search}” — {len(results)} found")
-    if results.empty:
-        st.info("No matches. Try the full Stats Explorer in the sidebar for broader filtering.")
-    else:
-        for country in ordered(results["country"].unique(), COUNTRY_ORDER):
-            sub = results[results["country"] == country]
-            st.markdown(f"#### {country}")
-            for _, row in sub.iterrows():
-                render_row(row)
-else:
-    tabs = st.tabs(present_countries)
-    for tab, country in zip(tabs, present_countries):
-        with tab:
-            sub_country = df[df["country"] == country]
-            n_sourced = int(sub_country["source_url"].notna().sum())
-            st.caption(f"{len(sub_country)} data points · {n_sourced} directly source-linked")
-            for cat in ordered(sub_country["category"].unique(), CATEGORY_ORDER):
-                sub_cat = sub_country[sub_country["category"] == cat]
-                st.markdown(f"**{cat}**")
-                for _, row in sub_cat.iterrows():
-                    render_row(row)
-                st.markdown("")
+    filtered = filtered[mask]
+
+# ---------------- Summary metrics ----------------
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Sources shown", len(filtered))
+m2.metric("Markets covered", filtered["region"].nunique())
+m3.metric("Free / freemium", int(filtered["cost"].isin(["Free", "Freemium"]).sum()))
+m4.metric("Categories", filtered["category"].nunique())
 
 st.divider()
-with st.expander(f"⚠️ Known corrections & sourcing caveats ({len(CORRECTIONS)}) — worth a skim before citing"):
+
+# ---------------- Charts ----------------
+chart_col1, chart_col2 = st.columns(2)
+
+REGION_PALETTE = [
+    "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
+    "#008300", "#4a3aa7", "#c0392b", "#16a2a2", "#8e6c3a",
+    "#5d5d5d", "#a05dbd",
+]
+
+with chart_col1:
+    st.subheader("Sources by market")
+    region_counts = filtered["region"].value_counts().sort_values(ascending=True)
+    fig = go.Figure(
+        go.Bar(
+            x=region_counts.values,
+            y=region_counts.index,
+            orientation="h",
+            marker_color=[REGION_PALETTE[i % len(REGION_PALETTE)] for i in range(len(region_counts))],
+            text=region_counts.values,
+            textposition="outside",
+            hovertemplate="%{y}: %{x} sources<extra></extra>",
+        )
+    )
+    fig.update_layout(
+        height=380,
+        margin=dict(l=10, r=30, t=10, b=10),
+        xaxis=dict(title="", showgrid=True, gridcolor="rgba(128,128,128,0.2)", zeroline=False),
+        yaxis=dict(title=""),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+with chart_col2:
+    st.subheader("Sources by access cost")
+    cost_counts = filtered["cost"].value_counts()
+    cost_counts = cost_counts.reindex([c for c in COST_ORDER if c in cost_counts.index])
+    palette_seq = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
+    fig2 = go.Figure(
+        go.Bar(
+            x=cost_counts.index,
+            y=cost_counts.values,
+            marker_color=palette_seq[: len(cost_counts)],
+            text=cost_counts.values,
+            textposition="outside",
+            hovertemplate="%{x}: %{y} sources<extra></extra>",
+        )
+    )
+    fig2.update_layout(
+        height=380,
+        margin=dict(l=10, r=10, t=10, b=10),
+        xaxis=dict(title=""),
+        yaxis=dict(title="", showgrid=True, gridcolor="rgba(128,128,128,0.2)", zeroline=False),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+    )
+    st.plotly_chart(fig2, use_container_width=True)
+
+st.divider()
+
+# ---------------- Tabs: browse table / corrections ----------------
+tab1, tab2 = st.tabs(["Browse sources", "Corrections & flags for workingdraft.md"])
+
+with tab1:
+    st.dataframe(
+        filtered[["category", "region", "name", "cost", "frequency", "description", "url"]].rename(
+            columns={
+                "category": "Category",
+                "region": "Region",
+                "name": "Name",
+                "cost": "Cost",
+                "frequency": "Frequency",
+                "description": "What it provides",
+                "url": "Link",
+            }
+        ),
+        use_container_width=True,
+        hide_index=True,
+        height=600,
+        column_config={
+            "Link": st.column_config.LinkColumn("Link", display_text="Open ↗"),
+        },
+    )
+
+with tab2:
     st.write(
-        "Items the research surfaced that correct, update or add caution to a claim in "
-        "`workingdraft.md` — not tied to one specific figure above, so check here too."
+        "Items the research surfaced that should be corrected or reconciled in `workingdraft.md` "
+        "before the next pass."
     )
     for item in CORRECTIONS:
-        st.markdown(f"**{item['title']}**")
-        st.caption(item["detail"])
+        with st.expander(item["title"]):
+            st.write(item["detail"])
