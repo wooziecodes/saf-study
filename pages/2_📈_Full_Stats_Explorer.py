@@ -1,7 +1,11 @@
+import sys
+from pathlib import Path
+
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from stats_data import CATEGORY_COLORS, COUNTRY_COLORS, CORRECTIONS, MANDATE_TRAJECTORIES, STATS
 
 st.set_page_config(page_title="Americas SAF Study — Stats Explorer", page_icon="📊", layout="wide")

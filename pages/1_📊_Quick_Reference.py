@@ -7,9 +7,13 @@ filterable stats explorer is one click away in the sidebar for deeper
 digging.
 """
 
+import sys
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from stats_data import CORRECTIONS, STATS
 
 st.set_page_config(page_title="Americas SAF Study — Reference", page_icon="🛩️", layout="wide")
