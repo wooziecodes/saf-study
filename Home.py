@@ -3,8 +3,8 @@
 The primary entry point for this Streamlit app. A curated, per-market
 shortlist of pre-vetted, free/open-access portals for follow-up research
 beyond the deck — click through to a market's primary source, pull the
-underlying data, keep digging. The Quick Reference stat cards and the full
-filterable stats explorer are one click away in the sidebar.
+underlying data, keep digging. The full filterable stats explorer is one
+click away in the sidebar.
 """
 
 import pandas as pd
@@ -22,9 +22,8 @@ st.title("🗂️ Americas SAF Study — Source Catalog")
 st.caption(
     "Curated, per-market shortlist of pre-vetted, free/open-access portals for follow-up research "
     "beyond the deck — one to a few best primary sources per market, not an exhaustive list. "
-    "👈 The sidebar has the **Quick Reference** stat cards and the full filterable **Stats "
-    "Explorer** for deeper digging. For the fuller raw-research archive (incl. paid/unconfirmed "
-    "sources), see `Datasources.md`."
+    "👈 The sidebar has the full filterable **Stats Explorer** for deeper digging. For the fuller "
+    "raw-research archive (incl. paid/unconfirmed sources), see `Datasources.md`."
 )
 
 # ---------------- Sidebar filters ----------------
