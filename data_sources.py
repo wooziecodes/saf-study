@@ -77,7 +77,7 @@ SOURCES = [
 
     # --- Singapore ---
     dict(category="Government & Regulatory", region="Singapore", name="CAAS Newsroom / Policy Documents",
-         url="https://www.caas.gov.sg/", cost="Free", frequency="Ad hoc",
+         url="https://www.caas.gov.sg/sustainability/airline-domain-sustainability-initiatives/", cost="Free", frequency="Ad hoc",
          description="SAF Levy mechanics, rate bands, SAFCo mandate. Check for the March 2026 levy-timing deferral before citing dates."),
     dict(category="Company & Project", region="Singapore", name="Neste Singapore Refinery (Tuas)",
          url="https://www.neste.com/en-sg/about-neste/how-we-operate/production/singapore-refinery", cost="Free", frequency="Static",
